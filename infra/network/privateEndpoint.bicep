@@ -1,11 +1,11 @@
 param location string = resourceGroup().location
 param subnetId string
 param privateLinkServiceId string
-param privateEndpointName string
-param privateLinkServiceGroupId string[]
+param name string
+param privateLinkServiceGroupIds string[]
 
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2023-02-01' = {
-  name: privateEndpointName
+  name: name
   location: location
   properties: {
     subnet: {
@@ -13,10 +13,10 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2023-02-01' = {
     }
     privateLinkServiceConnections: [
       {
-        name: '${privateEndpointName}Connection}'
+        name: '${name}Connection}'
         properties: {
           privateLinkServiceId: privateLinkServiceId
-          groupIds: privateLinkServiceGroupId
+          groupIds: privateLinkServiceGroupIds
         }
       }
     ]

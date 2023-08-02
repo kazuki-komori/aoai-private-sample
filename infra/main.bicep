@@ -31,11 +31,32 @@ module subnet 'network/subnet.bicep' = {
   }
 }
 
-// module privateEndopoint 'network/privateEndpoint.bicep' = {
-//   name: 'test-endpoint'
-//   scope: resourceGroup
-//   params: {
-//     subnetId: subnet.outputs.id
-//     private
-//   }
-// }
+module storageAccount 'storage/storageAccount.bicep' = {
+  name: 'sampleaccount20230802'
+  scope: resourceGroup
+  params: {
+    location: resourceGroupLocation
+    name: 'sampleaccount20230802'
+  }
+}
+
+module blobServices 'storage/blobServices.bicep' = {
+  name: 'default'
+  scope: resourceGroup
+  params: {
+    parentStorageAccountName: storageAccount.outputs.name
+    name: 'default'
+  }
+}
+
+module privateEndopoint 'network/privateEndpoint.bicep' = {
+  name: 'test-endpoint'
+  scope: resourceGroup
+  params: {
+    location: resourceGroupLocation
+    name: 'test-endpoint'
+    subnetId: subnet.outputs.id
+    privateLinkServiceId: storageAccount.outputs.id
+    privateLinkServiceGroupIds: ['Blob']
+  }
+}
